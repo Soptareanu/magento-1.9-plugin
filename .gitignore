@@ -1,0 +1,4 @@
+*
+!app/code/community/SamedayCourier
+!app/etc/modules/SamedayCourier_Shipping.xml
+!.gitignore
