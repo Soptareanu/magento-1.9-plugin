@@ -1,0 +1,58 @@
+<config>
+    <menu>
+        <samedayMenu translate="title" module="samedaycourier_shipping">
+            <title>Sameday Courier</title>
+            <sort_order>100</sort_order>
+            <children>
+                <samedayMenuPickupPoint module="samedaycourier_shipping">
+                    <title>Show Pickup Points </title>
+                    <action>adminhtml/pickuppoint</action>
+                </samedayMenuPickupPoint>
+                <samedayMenuServices module="samedaycourier_shipping">
+                    <title>Show Services</title>
+                    <action>adminhtml/service</action>
+                </samedayMenuServices>
+                <samedayMenuLockers module="samedaycourier_shipping">
+                    <title>Show Lockers</title>
+                    <action>adminhtml/locker</action>
+                </samedayMenuLockers>
+            </children>
+        </samedayMenu>
+    </menu>
+
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <samedayMenuPickupPoint translate="title" module="samedaycourier_shipping">
+                        <title>Sameday_Smdyextension</title>
+                        <sort_order>10</sort_order>
+                        <children>
+                            <pickupPointItem>
+                                <title>Show Pickup Points</title>
+                            </pickupPointItem>
+                        </children>
+                    </samedayMenuPickupPoint>
+                    <samedayMenuService translate="title" module="samedaycourier_shipping">
+                        <title>Sameday_Smdyextension</title>
+                        <sort_order>20</sort_order>
+                        <children>
+                            <pickupPointItem>
+                                <title>Show Services</title>
+                            </pickupPointItem>
+                        </children>
+                    </samedayMenuService>
+                    <samedayMenuService translate="title" module="samedaycourier_shipping">
+                        <title>Sameday_Smdyextension</title>
+                        <sort_order>30</sort_order>
+                        <children>
+                            <pickupPointItem>
+                                <title>Show Lockers</title>
+                            </pickupPointItem>
+                        </children>
+                    </samedayMenuService>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
