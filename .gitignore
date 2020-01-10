@@ -1,4 +1,5 @@
 *
 !app/code/community/SamedayCourier/*
+!app/design/adminhtml/default/samedaycourier_shipping/*
 app/etc/modules/SamedayCourier_Shipping.xml
 !.gitignore
