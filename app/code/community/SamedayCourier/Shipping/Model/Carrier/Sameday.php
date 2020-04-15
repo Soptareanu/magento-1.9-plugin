@@ -46,7 +46,7 @@ class SamedayCourier_Shipping_Model_Carrier_Sameday extends Mage_Shipping_Model_
 
         $availableServices = $this->getAvailableServices();
 
-        $isEstimatedCostEnabled = $this->getConfigData('estimated_cost');
+        $useEstimatedCost = (int) $this->getConfigData('estimated_cost');
 
         $estimatedCostExtraFee = $this->getConfigData('estimated_cost_extra_fee');
 
@@ -74,10 +74,13 @@ class SamedayCourier_Shipping_Model_Carrier_Sameday extends Mage_Shipping_Model_
                     continue;
                 }
 
-                if ($isEstimatedCostEnabled) {
+                if ($useEstimatedCost) {
                     $estimatedCost = $this->estimateCost($service['sameday_id'], $weight, $city, $county, $address, $subtotal);
-                    if ($estimatedCost !== null && $service['price'] < $estimatedCost) {
-                        $service['price'] = $estimatedCost;
+                    if ($estimatedCost !== null) {
+
+                        if (($useEstimatedCost === 1) || ($useEstimatedCost === 2 && $service['price'] < $estimatedCost)) {
+                            $service['price'] = $estimatedCost;
+                        }
 
                         if (isset($estimatedCostExtraFee) && $estimatedCostExtraFee > 0) {
                             $service['price'] += round( (float) $service['price'] * ($estimatedCostExtraFee / 100), 2);

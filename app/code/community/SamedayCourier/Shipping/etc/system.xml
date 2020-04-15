@@ -48,7 +48,7 @@
                         <estimated_cost translate="label">
                             <label>Use estimated cost</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>samedaycourier_shipping/estimateCostMode</source_model>
                             <sort_order>21</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
