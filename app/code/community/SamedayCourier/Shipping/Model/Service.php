@@ -1,5 +1,7 @@
 <?php
 
+use Sameday\Objects\Service\ServiceObject;
+
 class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
 {
     const STATUS_DISABLE = '0';
@@ -30,13 +32,11 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
      */
     public function getServices($testing)
     {
-        $services = Mage::getModel('samedaycourier_shipping/service')
+        return Mage::getModel('samedaycourier_shipping/service')
             ->getCollection()
             ->addFieldToSelect('*')
             ->addFieldToFilter('is_testing', $testing)
             ->getData();
-
-        return $services;
     }
 
     /**
@@ -76,7 +76,7 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
      * @param $testing
      * @throws Exception
      */
-    public function addService($serviceObject, $testing)
+    public function addService(ServiceObject $serviceObject, $testing)
     {
         $service = Mage::getModel('samedaycourier_shipping/service');
         $this->setParams($service, $serviceObject, $testing);
@@ -86,13 +86,12 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
     /**
      * @param int $id
      *
-     * @param object $serviceObject
-     *
+     * @param ServiceObject $serviceObject
      * @param bool $testing
      *
      * @throws Exception
      */
-    public function updateService($id, $serviceObject, $testing)
+    public function updateService($id, ServiceObject $serviceObject, $testing)
     {
         $service = Mage::getModel('samedaycourier_shipping/service');
         $service->load($id);
@@ -102,14 +101,31 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
 
     /**
      * @param $service
-     * @param $serviceObject
+     * @param ServiceObject $serviceObject
      * @param $testing
+     *
+     * @return void
      */
-    private function setParams($service, $serviceObject, $testing)
+    private function setParams($service, ServiceObject $serviceObject, $testing)
     {
         $service->setSamedayId($serviceObject->getId());
         $service->setSamedayName($serviceObject->getName());
         $service->setSamedayCode($serviceObject->getCode());
+
+        $optionalTaxes = null;
+        if (!empty($serviceObject->getOptionalTaxes())) {
+            foreach ($serviceObject->getOptionalTaxes() as $optionalTax) {
+                $optionalTaxes[] = array(
+                    'id' => $optionalTax->getId(),
+                    'name' => $optionalTax->getName(),
+                    'code' => $optionalTax->getCode()
+                );
+            }
+        }
+        $service->setServiceOptionalTaxes(isset($optionalTaxes)
+            ? json_encode($optionalTaxes)
+            : null);
+
         $service->setIsTesting($testing);
     }
 }
