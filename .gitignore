@@ -1,5 +1,8 @@
 *
 !app/code/community/SamedayCourier/*
 !app/design/adminhtml/default/samedaycourier_shipping/*
+app/design/frontend/base/default/layout/samedaycourier_shipping.xml
+!app/design/frontend/base/default/template/samedaycourier_shipping
 app/etc/modules/SamedayCourier_Shipping.xml
+!lib/samedaycourier-php-sdk
 !.gitignore
