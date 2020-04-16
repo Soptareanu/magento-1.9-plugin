@@ -117,7 +117,7 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
             foreach ($serviceObject->getOptionalTaxes() as $optionalTax) {
                 $optionalTaxes[] = array(
                     'id' => $optionalTax->getId(),
-                    'name' => $optionalTax->getName(),
+                    'type' => $optionalTax->getPackageType()->getType(),
                     'code' => $optionalTax->getCode()
                 );
             }
