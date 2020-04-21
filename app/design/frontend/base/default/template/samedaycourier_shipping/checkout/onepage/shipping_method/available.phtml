@@ -84,7 +84,7 @@
                                     <?php if (Mage::helper('samedaycourier_shipping/data')->isOpenPackageEnabled() === 1 && Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId)) { ?>
                                             <div class="custom-control custom-checkbox sameday_open_package_label" id="sameday_open_package_<?php echo Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId) ?>" style="display: none">
                                                 <label class="custom-control-label">
-                                                    <input type="checkbox" class="sameday_open_package custom-control-input" data-code="<?php echo $serviceCode; ?>" name="sameday_open_package" style="vertical-align: top">
+                                                    <input type="checkbox" class="sameday_open_package custom-control-input" value="<?php echo $_rate->getCode() ?>" data-code="<?php echo $serviceCode; ?>" name="sameday_open_package" style="vertical-align: top">
                                                     <?php echo Mage::helper('samedaycourier_shipping/data')->openPackageLabel(); ?>
                                                 </label>
                                             </div>
