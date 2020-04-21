@@ -44,7 +44,7 @@ class SamedayCourier_Shipping_Model_Observer extends Varien_Object
                 'is_open_package' => $isOpenPackage
             );
 
-            Mage::getSingleton('samedaycourier_shipping/lockerOrder')->saveOpenPackageOrder($params);
+            Mage::getSingleton('samedaycourier_shipping/openPackageOrder')->saveOpenPackageOrder($params);
         }
     }
 }

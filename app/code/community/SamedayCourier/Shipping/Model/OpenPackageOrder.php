@@ -26,7 +26,7 @@ class SamedayCourier_Shipping_Model_OpenPackageOrder extends Mage_Core_Model_Abs
      */
     public function getOpenPackageByOrderId($orderId)
     {
-        $openPackageOrder = Mage::getModel('samedaycourier_shipping/lockerOrder')
+        $openPackageOrder = Mage::getModel('samedaycourier_shipping/openPackageOrder')
             ->getCollection()
             ->addFieldToSelect('*')
             ->addFieldToFilter('order_id', $orderId)
