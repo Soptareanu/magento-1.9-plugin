@@ -54,6 +54,9 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
         $currentService = explode("_", $order['shipping_method'], 4);
         $currentService = isset($currentService[2]) ? $currentService[2] : null;
 
+        $openPackage = Mage::getModel('samedaycourier_shipping/openPackageOrder');
+        $isOpenPackage = $openPackage->getOpenPackageByOrderId($this->getRequest()->order_id);
+
         $fieldset->addField('order_id', 'hidden', array(
             'name' => 'order_id',
             'value' => $this->getRequest()->order_id
@@ -179,6 +182,15 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
                 'required' => true
             )
         );
+
+        $fieldset->addField('open_package', 'checkbox', array(
+            'name' => 'open_package',
+            'label' => Mage::helper('samedaycourier_shipping/data')->__('Open Package'),
+            'title' => Mage::helper('samedaycourier_shipping/data')->__('Open Package'),
+            'checked' => $isOpenPackage,
+            'value' => 1,
+            'required' => false,
+        ));
 
         return parent::_prepareForm();
     }

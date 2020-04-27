@@ -128,6 +128,7 @@
         jQuery(document).ready(function($){
             $(document).on("click", "#selectLocker", function () {
                 $('.sameday_open_package_label').css({ 'display': 'none' });
+                $('input[name="sameday_open_package"]').removeAttr('checked');
 
                 lockerValue = $(this).val();
 
@@ -144,9 +145,13 @@
 
             $(document).on('click', 'input[name="shipping_method"]', function () {
                 $('.sameday_open_package_label').css({ 'display': 'none' });
+                $('#selectLocker').val('');
+                $('#selectLocker').closest("li").children()[0].disabled = true;
+                $('#selectLocker').closest("li").children()[0].checked = false;
 
                 let serviceId = $(this).data('serviceid');
                 if (serviceId !== null) {
+                    $('input[name="sameday_open_package"]').removeAttr('checked');
                     let openPackage = $('#sameday_open_package_' + serviceId);
                     openPackage.css({ 'display': 'block' });
                 }

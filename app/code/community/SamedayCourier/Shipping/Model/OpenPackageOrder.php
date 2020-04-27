@@ -22,7 +22,7 @@ class SamedayCourier_Shipping_Model_OpenPackageOrder extends Mage_Core_Model_Abs
     /**
      * @param $orderId
      *
-     * @return int|null
+     * @return bool
      */
     public function getOpenPackageByOrderId($orderId)
     {
@@ -32,7 +32,7 @@ class SamedayCourier_Shipping_Model_OpenPackageOrder extends Mage_Core_Model_Abs
             ->addFieldToFilter('order_id', $orderId)
             ->getData();
 
-        return isset($openPackageOrder[0]) ? $openPackageOrder[0]['is_open_package'] : null;
+        return isset($openPackageOrder[0]) ? $openPackageOrder[0]['is_open_package'] : false;
     }
 
     /**

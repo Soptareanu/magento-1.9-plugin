@@ -5,6 +5,7 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
     private $store;
     private $awbModel;
     private $packageModel;
+    private $isTesting;
 
     public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
     {
@@ -12,6 +13,7 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
         $this->store = Mage::app()->getStore();
         $this->awbModel = Mage::getModel('samedaycourier_shipping/awb');
         $this->packageModel = Mage::getModel('samedaycourier_shipping/package');
+        $this->isTesting = Mage::getStoreConfig('carriers/samedaycourier_shipping/is_testing', $this->store);
     }
 
     protected function _isAllowed()
@@ -41,11 +43,21 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
         $order = Mage::getModel('sales/order')->load($formData['order_id'])->getData();
         $shippingDetails = Mage::getModel('sales/order_address')->load($order['shipping_address_id'])->getData();
 
-        $testing = Mage::getStoreConfig('carriers/samedaycourier_shipping/is_testing', $this->store);
-
         $formData['awb_service'];
         $orderInfo = array_merge($shippingDetails, $formData, $order);
-        $service = Mage::getModel('samedaycourier_shipping/service')->getServiceSameday($formData['awb_service'], $testing)[0];
+        $service = Mage::getModel('samedaycourier_shipping/service')->getServiceSameday($formData['awb_service'], $this->isTesting)[0];
+
+        $orderInfo['service_tax_ids'] = [];
+        if (null !== $formData['open_package']) {
+            if (null !== $service['service_optional_taxes']) {
+                foreach (json_decode($service['service_optional_taxes']) as $optional_tax) {
+                    if ($optional_tax->code === 'OPCG'
+                        && $optional_tax->type === 0) {
+                        $orderInfo['service_tax_ids'][] = $optional_tax->id;
+                    }
+                }
+            }
+        }
 
         try {
             // No errors, post AWB.
@@ -299,7 +311,7 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
         $lockerId = Mage::getModel('samedaycourier_shipping/lockerOrder')->getLockerIdByOrderId($params['order_id']);
 
         if (null !== $lockerId) {
-            $locker = Mage::getModel('samedaycourier_shipping/locker')->getLockerSameday($lockerId, 1);
+            $locker = Mage::getModel('samedaycourier_shipping/locker')->getLockerSameday($lockerId, $this->isTesting);
         }
 
         if (null != $locker && !empty($locker)) {
@@ -346,7 +358,7 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
             $params['ramburs'],
             new \Sameday\Objects\Types\CodCollectorType(\Sameday\Objects\Types\CodCollectorType::CLIENT),
             null,
-            array(),
+            $params['service_tax_ids'],
             null,
             null,
             $params['observation'],
