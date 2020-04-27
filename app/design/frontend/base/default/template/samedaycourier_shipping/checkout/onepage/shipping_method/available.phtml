@@ -46,12 +46,13 @@
                             <?php else: ?>
 
                             <?php
-                            $serviceCode = explode("_", $_rate->getCode());
-                            $serviceCode = isset($serviceCode[3]) ? $serviceCode[3] : null;
+                            $rateCode = explode("_", $_rate->getCode());
+                            $serviceId = isset($rateCode[2]) ? $rateCode[2] : null;
+                            $serviceCode = isset($rateCode[3]) ? $rateCode[3] : null;
                             if($serviceCode !== null && $serviceCode === "LN") { $serviceHasLockers = true; } else { $serviceHasLockers = false; }
                             ?>
 
-                            <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" <?php echo $serviceHasLockers ? 'disabled' : '' ?> id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio"/>
+                            <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" <?php if (Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId)) { ?> data-serviceid="<?php echo Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId); ?>" <?php } ?> <?php echo $serviceHasLockers ? 'disabled' : '' ?> id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio"/>
                             <?php if ($_rate->getCode() === $this->getAddressShippingMethod()): ?>
                                 <script type="text/javascript">
                                     //<![CDATA[
@@ -79,6 +80,15 @@
                                                 <?php } ?>
                                             </select>
                                         </div>
+                                    <?php } else { ?>
+                                    <?php if (Mage::helper('samedaycourier_shipping/data')->isOpenPackageEnabled() === 1 && Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId)) { ?>
+                                            <div class="custom-control custom-checkbox sameday_open_package_label" id="sameday_open_package_<?php echo Mage::helper('samedaycourier_shipping/data')->serviceHasOpcg($serviceId) ?>" style="display: none">
+                                                <label class="custom-control-label">
+                                                    <input type="checkbox" class="sameday_open_package custom-control-input" value="<?php echo $_rate->getCode() ?>" data-code="<?php echo $serviceCode; ?>" name="sameday_open_package" style="vertical-align: top">
+                                                    <?php echo Mage::helper('samedaycourier_shipping/data')->openPackageLabel(); ?>
+                                                </label>
+                                            </div>
+                                        <?php } ?>
                                     <?php } ?>
                                 </label>
                             <?php endif ?>
@@ -117,6 +127,9 @@
 
         jQuery(document).ready(function($){
             $(document).on("click", "#selectLocker", function () {
+                $('.sameday_open_package_label').css({ 'display': 'none' });
+                $('input[name="sameday_open_package"]').removeAttr('checked');
+
                 lockerValue = $(this).val();
 
                 $(this).closest("li").children()[0].checked = false;
@@ -126,12 +139,26 @@
                     $(this).closest("li").children()[0].disabled = false;
                     $(this).closest("li").children()[0].checked = true;
                 }
-
             });
 
             $("#selectLocker").trigger("click");
-        });
 
+            $(document).on('click', 'input[name="shipping_method"]', function () {
+                $('.sameday_open_package_label').css({ 'display': 'none' });
+                $('#selectLocker').val('');
+                $('#selectLocker').closest("li").children()[0].disabled = true;
+                $('#selectLocker').closest("li").children()[0].checked = false;
+
+                let serviceId = $(this).data('serviceid');
+                if (serviceId !== null) {
+                    $('input[name="sameday_open_package"]').removeAttr('checked');
+                    let openPackage = $('#sameday_open_package_' + serviceId);
+                    openPackage.css({ 'display': 'block' });
+                }
+            });
+
+            $('input[name="shipping_method"]').trigger("click");
+        });
         //]]>
     </script>
 <?php endif; ?>

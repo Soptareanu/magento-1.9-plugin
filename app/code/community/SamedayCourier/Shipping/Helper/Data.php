@@ -43,6 +43,49 @@ class SamedayCourier_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @return int
+     */
+    public function isOpenPackageEnabled()
+    {
+        return (int) Mage::getStoreConfig('carriers/samedaycourier_shipping/open_package');
+    }
+
+    /**
+     * @return string
+     */
+    public function openPackageLabel()
+    {
+        return (string) Mage::getStoreConfig('carriers/samedaycourier_shipping/open_package_label');
+    }
+
+    /**
+     * @param $serviceSamedayId
+     *
+     * @return bool|mixed
+     */
+    public function serviceHasOpcg($serviceSamedayId)
+    {
+        $serviceHasOpcg = false;
+        $service = Mage::getModel('samedaycourier_shipping/service')->getServiceSameday(
+            $serviceSamedayId,
+            Mage::getStoreConfig('carriers/samedaycourier_shipping/is_testing')
+        )[0];
+
+        $optionalTaxes = json_decode($service['service_optional_taxes']);
+        if (! isset($optionalTaxes)) {
+            return $serviceHasOpcg;
+        }
+
+        foreach ($optionalTaxes as $optionalTax) {
+            if ($optionalTax->code === 'OPCG' && (int) $optionalTax->type === 0) {
+                $serviceHasOpcg = $service['sameday_id']; break;
+            }
+        }
+
+        return $serviceHasOpcg;
+    }
+
+    /**
      * @param $data     *
      * @return false|string
      */
