@@ -111,7 +111,6 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
         $service->setSamedayId($serviceObject->getId());
         $service->setSamedayName($serviceObject->getName());
         $service->setSamedayCode($serviceObject->getCode());
-
         $optionalTaxes = null;
         if (!empty($serviceObject->getOptionalTaxes())) {
             foreach ($serviceObject->getOptionalTaxes() as $optionalTax) {
@@ -124,8 +123,8 @@ class SamedayCourier_Shipping_Model_Service extends Mage_Core_Model_Abstract
         }
         $service->setServiceOptionalTaxes(isset($optionalTaxes)
             ? json_encode($optionalTaxes)
-            : null);
-
+            : null
+        );
         $service->setIsTesting($testing);
     }
 }
