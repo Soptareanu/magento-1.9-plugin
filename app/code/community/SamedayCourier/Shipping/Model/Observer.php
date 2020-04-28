@@ -5,16 +5,31 @@
  */
 class SamedayCourier_Shipping_Model_Observer extends Varien_Object
 {
+    /**
+     * @return Mage_Core_Model_Abstract|null
+     */
+    public function getCoreSession()
+    {
+        return Mage::getSingleton('core/session');
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     */
     public function storeSamedayCourierCheckoutAdditionalInfo(Varien_Event_Observer $observer)
     {
-        if ($observer->getRequest()->get('locker_select')) {
-            Mage::getSingleton('core/session')->setData('samedaycourier_locker_id', $observer->getRequest()->get('locker_select'));
-        }
+        if (null !== $this->getCoreSession()) {
+            $this->getCoreSession()->setData('samedaycourier_locker_id', null);
+            if ($observer->getRequest()->get('locker_select')) {
+                $this->getCoreSession()->setData('samedaycourier_locker_id', $observer->getRequest()->get('locker_select'));
+            }
 
-        if ($observer->getRequest()->get('sameday_open_package')
-            && $observer->getRequest()->get('sameday_open_package') === $observer->getRequest()->get('shipping_method')
-        ) {
-            Mage::getSingleton('core/session')->setData('sameday_open_package', 1);
+            $this->getCoreSession()->setData('sameday_open_package', null);
+            if ($observer->getRequest()->get('sameday_open_package')
+                && $observer->getRequest()->get('sameday_open_package') === $observer->getRequest()->get('shipping_method')
+            ) {
+                $this->getCoreSession()->setData('sameday_open_package', 1);
+            }
         }
     }
 
@@ -23,15 +38,14 @@ class SamedayCourier_Shipping_Model_Observer extends Varien_Object
      */
     public function afterPlaceOrder(Varien_Event_Observer $observer)
     {
-        $coreSession = Mage::getSingleton('core/session');
         $orderId = $observer->getData('order')['entity_id'];
 
         $lockerId = null;
         $isOpenPackage = null;
 
-        if (null !== $coreSession) {
-            $lockerId = $coreSession->getData('samedaycourier_locker_id');
-            $isOpenPackage = $coreSession->getData('sameday_open_package');
+        if (null !== $this->getCoreSession()) {
+            $lockerId = $this->getCoreSession()->getData('samedaycourier_locker_id');
+            $isOpenPackage = $this->getCoreSession()->getData('sameday_open_package');
         }
 
 
